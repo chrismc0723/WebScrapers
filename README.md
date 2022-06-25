@@ -5,4 +5,4 @@ I have some small web scrapers available to test and at this point in time I am 
 I will provide a version one for this very soon.
 
 The MCU webscraper is a work in progress.
-the MCU.py I am currently working on. I tried using Beautiful Soup however that wasn't working with my findings and I am also trying Selenium however that doesn't seem to work either. going to research over the weekend to try find a solution.
+I haven't been able to find a solution for webscraping the marvel website. the goal is for a user to input a character and they recieve links and names of everything that shows up on each search page for that character.
