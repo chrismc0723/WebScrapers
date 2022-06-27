@@ -1,33 +1,31 @@
-from bs4 import BeautifulSoup
-import requests
-import re
+from selenium import webdriver
+from selenium.webdriver import Keys
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
-search_term = input("Input: ")
+user_input = input("character: ")
+options = Options()
+options.headless = True
+options.add_argument("--window-size=1920,1080")
 
-url = "https://www.marvel.com/search"
-result = requests.get(url)
-doc = BeautifulSoup(result.text, "html.parser")
+driver = webdriver.Chrome("C:\Program Files (x86)\chromedriver.exe")
+driver.get("https://www.marvel.com/search")
 
-page_text = doc.find(class_="pagination__item pagination__item_active")
-pages = int(str(page_text).split("/")[-2].split(">")[-1][:-1])
+search_input_xpath = "//input[@placeholder='Search']"
+search_input = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, search_input_xpath)))
+search_input.send_keys(user_input)
 
-items_found = {}
+first_item_in_auto_suggest_area_xpath = "//div[contains(@id,'react-autowhatever')]/ul"
+WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.XPATH, first_item_in_auto_suggest_area_xpath)))
+search_input.send_keys(Keys.ENTER)
 
-for page in range(1, pages + 20):
-    url = f"https://www.marvel.com/search?limit=20&query={search_term}&offset={page}"
-    page = requests.get(url).text
-    doc = BeautifulSoup(page, "html.parser")
+section = WebDriverWait(driver, 20).until(
+    EC.presence_of_element_located((By.CSS_SELECTOR, ".search-list p.card-body__headline a")))
 
-    ul = doc.find(class_="search-list__cards")
-    items = ul.find_all(text=re.compile(search_term))
-
-    for item in items:
-        parent = item.parent
-        if parent.name != "a":
-            continue
-
-        link = parent['href']
-        next_parent = item.find_parent(class_="mvl-card__search-wrapper--featured")
-        print(item)
-        print(link)
+character = driver.find_elements(By.CSS_SELECTOR, ".search-list p.card-body__headline a")
+for character_tag in character:
+    print(character_tag.text)
+    print(character_tag.get_attribute("href"))
 
