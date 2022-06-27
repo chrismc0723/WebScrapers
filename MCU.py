@@ -29,3 +29,4 @@ for character_tag in character:
     print(character_tag.text)
     print(character_tag.get_attribute("href"))
 
+driver.close()
